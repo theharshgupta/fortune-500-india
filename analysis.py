@@ -48,15 +48,15 @@ def make_query(url):
 
 def parse_csv():
     """
-    CSV file
+    CSV file. Currently, the second pandas version works.
     :return:
     """
-    # with open("result.csv") as f:
-    #     data = f.read()
-    #     data = data.replace(", ", "|").replace(',', '')
-    #     print(data)
-    # with open("out.csv", 'w') as f:
-    #     f.write(data)
+    with open("result.csv") as f:
+        data = f.read()
+        data = data.replace(", ", "|").replace(',', '')
+        print(data)
+    with open("out.csv", 'w') as f:
+        f.write(data)
     df = pandas.read_csv("out.csv", "|")
     print(df.to_string())
     df.to_csv("out.csv", index=False)
@@ -81,17 +81,25 @@ def parse_query(html):
     return companies
 
 
+def scrape():
+    """
+    Scrapes the data from Fortune India's website.
+    :return: saves output to out.csv
+    """
+    html = make_query(BASE_URL)
+    companies = parse_query(html)
+    master_data = []
+    with open("result.csv", "a", newline='') as f:
+        for company in companies:
+            company.get_info_table()
+            print(company.values)
+            master_data.append(company.values)
+    print(master_data)
+    df = pandas.DataFrame.from_records(master_data)
+    print(df.to_string())
+    df.to_csv("result.csv", index=False)
+
+
 if __name__ == '__main__':
     parse_csv()
-    # html = make_query(BASE_URL)
-    # companies = parse_query(html)
-    # master_data = []
-    # with open("result.csv", "a", newline='') as f:
-    #     for company in companies:
-    #         company.get_info_table()
-    #         print(company.values)
-    #         master_data.append(company.values)
-    # print(master_data)
-    # df = pandas.DataFrame.from_records(master_data)
-    # print(df.to_string())
-    # df.to_csv("result.csv", index=False)
+
